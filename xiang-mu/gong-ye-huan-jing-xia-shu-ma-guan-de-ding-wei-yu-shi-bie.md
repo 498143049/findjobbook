@@ -26,14 +26,33 @@ http://blog.csdn.net/honpey/article/details/9028059
    
 5. 特征提取 有哪些特征 
    Hog cell block 步长
-   LBP 多少个区间 多少个维 等价模式 58
+   LBP 多少个区间 多少个维 等价模式 58 分成的区间数目
    Haar 矩特征 adboost 提取有效特征
 
 6. SHFI SURF FAST BRISK ORB
    //http://blog.jobbole.com/83919/
    
    
-6. SVM分类器 SVM的推导
-7. canny 算法的具体过程，如何做到自适应
-8. Radon 是怎么估计倾斜角度的。
-9. Qt的基本内容，WebSocket 的通信过程。 
+7. SVM分类器 SVM的推导 
+    这个的推导过程，以及KKT条件之类的。
+
+8. canny 算法的具体过程，如何做到自适应
+   1. 使用sobel 算子 得到全局梯度强度
+   2. 统计梯度的直方图
+   3. 计算出高阈值
+   4. 计算忽底阈值
+
+   1. 高斯模糊
+   2. 计算梯度幅值和方向
+   3. 非最大值抑制
+   4. 双阀值
+   5. 滞后边界跟踪
+
+
+9. Radon 是怎么估计倾斜角度的。
+
+
+
+10. Qt的基本内容，WebSocket 的通信过程。 
+qt的信号与槽 
+WebSocket 传递的json 浏览器通过json解析知道图片的位置，以及传递的数据。
