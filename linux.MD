@@ -36,6 +36,11 @@ kill – send a signal to a process
 + sed
 + crontab 分钟 小时 几号 月份 星期几
 + cat
++ whereis
++ grep 
++ gcc
++ useradd
+
 
 ## linux 环境变量
 /ect/profile
@@ -48,3 +53,5 @@ kill – send a signal to a process
 该文件包含专用于用户的bash shell的bash信息 ,当登录时以及每次打开新的shell时,该该文件被读取 .
 ~/.bash_logout
 当每次退出系统(退出bash shell)时,执行该文件.
+
+
