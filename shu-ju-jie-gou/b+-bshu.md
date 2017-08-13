@@ -21,31 +21,3 @@ R 树
 
 + B*树：在B+树基础上，为非叶子结点也增加链表指针，将结点的最低利用率从1/2提高到2/3；
 
-
-## 事物的ACID
-https://xuanlongq.github.io/2017/08/01/ACID/
-+ 原子性
-+ 一致性
-+ 隔离性
-+ 持久性
-
-可重复读
-幻读
-不可重复读
-
-悲观锁
-但是对一个仅仅读取数据的事务使用排他锁非常昂贵，因为这会迫使其它只需要读取相同数据的事务等待。因此就有了另一种锁，共享锁。
-悲观锁应用  TABLOCKX
-~~~ sql
-Begin Tran
-select top 1 @TrainNo=T_NO
-         from Train_ticket   with (UPDLOCK)   where S_Flag=0
-
-      update Train_ticket
-         set T_Name=user,
-             T_Time=getdate(),
-             S_Flag=1
-         where T_NO=@TrainNo
-commit
-~~~
-
