@@ -40,6 +40,24 @@ kill – send a signal to a process
 + grep 
 + gcc
 + useradd
++ find
++ ps
++ pg
++ jobs
++ less 
++ more 
++ rpm 
++ mount 
++ netstat 
++ df 
+
++ route 
+
+
++ sort 
++ unique 
+
+
 
 
 ## linux 环境变量
@@ -53,5 +71,15 @@ kill – send a signal to a process
 该文件包含专用于用户的bash shell的bash信息 ,当登录时以及每次打开新的shell时,该该文件被读取 .
 ~/.bash_logout
 当每次退出系统(退出bash shell)时,执行该文件.
+
+
+  文件默认权限是666,“拿掉”002权限就是664,其中r-4,w-2,x-1。这里“拿掉”的概念不是数学上的减掉，如果没有这个权限位，也就不用“拿掉”了。
+
+  /etc/resolv.conf
+     文件功能：DNS客户机配置文件，设置DNS服务器的IP地址及DNS域名
+/etc/host.conf
+    指定主机名查找方法，通常指先查找文件/etc/hosts,找不到时再向DNS服务器请求。
+/etc/networks
+   配置网络的
 
 
