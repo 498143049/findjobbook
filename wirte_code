@@ -1,0 +1,55 @@
+//http://blog.csdn.net/u014492609/article/details/50878767
+// 1、考虑指针是否为NULL
+// 2、考虑内存是否重叠问题
+// 3、高效性，32总线可以每次复制一个int，64位总线可以每次复制一个long long
+void *memcopy(const void * src, void * dst, size_t len){
+    if(src == NULL||dst==NULL){
+        return NULL;
+    }
+    void *ret = dst;     //因为dst 会增加会者变少，因此需要先行记录
+    //重后往前复制 
+    if(src > dst || (char *)dst>= (char *)src+len){
+        //没有重合 
+        while(len--){
+            *(char *)dst = *(char *)src;
+            dst = (char *)dst +1;
+            src = (char *)src +1;
+        }
+    }
+    else {
+        //有区域重叠 
+        src = （char *）src + len -1;
+        dst = （char *）dst + len -1;
+         while(len--){
+            *(char *)dst = *(char *)src;
+            dst = (char *)dst - 1;
+            src = (char *)src - 1;
+        }
+
+    }
+    return ret;
+}
+// 全排列交换 
+
+
+//洗牌算法 
+void shuffle(vector<int> vt){
+    size_t size = vt.size();
+    if(vt.size()==0) return;
+
+    for(int i=0; i<size-1;++i){
+        int index = i+rand()%(n-i);
+        swap(a[i],a[j]);
+    }
+}
+//实现一个智能指针
+
+//线程安全的单例模式
+
+//线程通信 
+
+
+//进程通信 
+
+//死锁代码 
+
