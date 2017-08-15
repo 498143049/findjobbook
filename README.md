@@ -411,3 +411,8 @@ wait()方法会导致线程放弃对象锁，进入等待此对象的等待锁�
 
 https://www.nowcoder.com/test/question/done?tid=9882369&qid=15003#summary 主定力
 
+// string 实现原理
+
+### 计算机网络状态表
+
+https://www.nowcoder.com/test/question/done?tid=9925864&qid=4687#summary

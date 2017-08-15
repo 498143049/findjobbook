@@ -159,10 +159,45 @@ int main(){
 }
 ~~~
 ### 锁的种类
+#### 读写锁 
+高级别锁，区分读和写，符合条件时允许多个线程访问对象。处于读锁操作时可以允许其他线程和本线程的读锁， 但不允许写锁， 处于写锁时则任何锁操作都会睡眠等待；适用于大量读少量写的时候
+#### 自旋锁 
+；同互斥锁不同的是在锁操作需要等待的时候并不是睡眠等待唤醒，而是循环检测保持者已经释放了锁，这样做的好处是节省了**线程从睡眠状态到唤醒之间内核会产生的消耗**。
+#### 递归搜
+严格上讲递归锁只是互斥锁的一个特例，同样只能有一个线程访问该对象，但允许同一个线程在未释放其拥有的锁时反复对该锁进行加锁操作；
+#### 读写锁的实现
+~~~C++
+mutex count;
+mutex write;
+int read_count = 0;
+//读和写是互斥的，因此在读的第一次的时候加一把锁
+void read_lock(){
+    count.lock();
+    read_count++;
+    if(read_count==1){
+        write.lock();
+    }
+    count.unlock();
+}
+void read_unlock(){
+    count.lock();
+    read_count--;
+    if(read_count==0){
+        write.unlock();
+    }
+    count.unlock();
+}
+void write_lock(){
+    write.lock();
+}
+void write_unlock(){
+    write.unlock();
+}
 
-### 读写锁 
 
-### 死锁代码 
+
+
+~~~
 
 ### 条件变量
 #### 打印ABC 10次
@@ -232,19 +267,96 @@ int main(){
     return 0;
 }  
 ~~~
-
-
-
-
 ### 信号量 //http://blog.csdn.net/xiajun07061225/article/details/8467853
+//信号量就是用来计数的如果是保护代码则采用的是二进制信号量 ???
+~~~ c++
+#include <stdio.h>  
+#include <unistd.h>  
+#include <stdlib.h>  
+#include <string.h>  
+#include <pthread.h>  
+#include <semaphore.h>  
+  
+//线程函数   
+void *thread_function(void *arg);  
+  
+sem_t bin_sem;//信号量对象  
+  
+#define WORK_SIZE 1024  
+  
+char work_area[WORK_SIZE];//工作区  
+  
+int main()  
+{  
+    int res;  
+    pthread_t a_thread;  
+    void *thread_result;  
+  
+    res = sem_init(&bin_sem,0,0);//初始化信号量对象  
+  
+
+    res = pthread_create(&a_thread,NULL,thread_function,NULL);  //创建新线程   
+ 
+
+    while(strncmp("end",work_area,3) != 0)  
+    {//输入没有结束  
+        fgets(work_area,WORK_SIZE,stdin);  
+        sem_post(&bin_sem);//给信号量值加一  
+    }  
+  
+    printf("waiting for thread to finish\n");  
+  
+    //等待子线程结束，收集子线程信息  
+    res = pthread_join(a_thread,&thread_result);  
+    printf("Thread joined\n");  
+  
+    //销毁信号量对象  
+    sem_destroy(&bin_sem);  
+  
+}  
+  
+void *thread_function(void *arg)  
+{  
+    sem_wait(&bin_sem);//将信号量值减一。  
+  
+    while(strncmp("end",work_area,3))  
+    {  
+        printf("You input %d characters\n",strlen(work_area) - 1);  
+        sem_wait(&bin_sem);  
+    }  
+  
+    pthread_exit(NULL);//线程终止执行  
+}  
+~~~ 
 
 ### 死锁代码
+#### 例子
+~~~ C++
+std::mutex mt1, mt2;
+// thread 1
+{
+    std::lock_guard<std::mutex> lck1(mt1);    //持有mt1 需要mt2
+    std::lock_guard<std::mutex> lck2(mt2);
+    // do something
+}
+// thread 2
+{
+    std::lock_guard<std::mutex> lck1(mt2);   //持有mt2 需要mt1
+    std::lock_guard<std::mutex> lck2(mt1);
+    // do something
+}
+~~~
+#### 银行家算法
+1. 判断请求是否高于需求，如果高于请求则出错，否则下一步
+2. 判断是否需求高于目前有的，如果有多则分配。否则等待
+3. 试探性的分配请求
+4. 系统执行安全算法，如果安全则操作执行，否则则回滚
 
 
-### 无锁编程 生成与消费队列
+### 无锁编程 下生产者消费者模式 生成与消费队列
+
+
 //进程通信 
-
-
 
 // C++ 异常处理 http://blog.jobbole.com/44409/
 
