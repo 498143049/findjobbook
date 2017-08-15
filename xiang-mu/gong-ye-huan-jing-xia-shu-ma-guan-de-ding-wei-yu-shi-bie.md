@@ -41,14 +41,14 @@
 1. 计算其曲线的积分，简单的说就是，每一个图像选择角度的水平投影。
 
 
-5. 特征提取 有哪些特征 
-   Hog cell block 步长
-   LBP 多少个区间 多少个维 等价模式 58 分成的区间数目
-   Haar 矩特征 adboost 提取有效特征
+### [特征提取 有哪些特征](https://lidongxuan.github.io/blog/feature) 
++ Hog cell block 步长 计算梯度 让其方向
++ LBP 多少个区间 多少个维 等价模式 58 分成的区间数目 光照
++ Haar 矩特征 adboost 提取有效特征
 
-6. SHFI SURF FAST BRISK ORB
-   //http://blog.jobbole.com/83919/
+6. [SHFI SURF FAST BRISK ORB](http://blog.jobbole.com/83919/)
    
+
    
 7. SVM分类器 SVM的推导 
     这个的推导过程，以及KKT条件之类的。
