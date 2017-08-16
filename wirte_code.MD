@@ -92,6 +92,7 @@ Class smartPoint{
         ++ar->count;
     };
     smartPoint& operator=(const smartPoint& src){
+        if(this==&src) return *this; //判断是不是自己 
         if((--ar.count)==0)
             delete ar；
         ar = src.ar;
