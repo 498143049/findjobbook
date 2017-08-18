@@ -87,7 +87,7 @@ Class smartPoint{
             delete ar;
         }
     };
-    smartPoint& smartPoint(const smartPoint& src){
+    smartPoint& smartPoint(const smartPoint& src){v
         ar = src.ar;
         ++ar->count;
     };
