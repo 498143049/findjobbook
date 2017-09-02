@@ -347,6 +347,208 @@ std::mutex mt1, mt2;
     // do something
 }
 ~~~
+
+## string 实现原理
+~~~ C++
+class String
+{
+    public:
+        String(const char *str = NULL);// 普通构造函数
+        String(const String &other);    // 拷贝构造函数
+        ~String(void);    // 析构函数
+        String & operate =(const String &other);// 赋值函数
+    private:
+        char *m_data;// 用于保存字符串
+}; 
+//注意如果字符为空，则还是需要分配一个字符
+String::String(const char *str)
+{
+        if(str==NULL)
+        {
+                m_data = new char[1]; // 得分点：对空字符串自动申请存放结束标志'\0'的//加分点：对m_data加NULL 判断
+                *m_data = '\0';
+        }    
+        else
+        {
+         int length = strlen(str);
+         m_data = new char[length+1]; // 若能加 NULL 判断则更好
+         strcpy(m_data, str);
+        }
+} 
+String::~String(void)
+{
+    delete [] m_data; // 或delete m_data;
+}
+
+String::String(const String &other) 　　　// 得分点：输入参数为const型
+{     
+        int length = strlen(other.m_data);
+        m_data = new char[length+1]; 　　　　//加分点：对m_data加NULL 判断
+        strcpy(m_data, other.m_data);    
+} 
+String & String::operate =(const String &other) // 得分点：输入参数为const
+
+型
+{     
+    if(this == &other) //得分点：检查自赋值
+        return *this; 
+    delete [] m_data; //得分点：释放原有的内存资源
+    int length = strlen( other.m_data );      
+    m_data = new char[length+1];//对m_data加NULL 判断
+    strcpy( m_data, other.m_data );   
+    return *this;   //得分点：返回本对象的引用  
+
+}
+~~~
+#### 总体版本
+~~~ C++
+链接：https://www.nowcoder.com/questionTerminal/b6daadf699884fb4856d5499cac7691d
+来源：牛客网
+
+/*-------------------------------------
+*   日期：2015-03-31
+*   作者：SJF0115
+*   题目: 实现string类
+*   来源：百度
+*   博客：
+------------------------------------*/
+#include <iostream>
+#include <cstring>
+using namespace std;
+ 
+class String{
+public:
+    // 默认构造函数
+    String(const char* str = NULL);
+    // 复制构造函数
+    String(const String &str);
+    // 析构函数
+    ~String();
+    // 字符串连接
+    String operator+(const String & str);
+    // 字符串赋值
+    String & operator=(const String &str);
+    // 字符串赋值
+    String & operator=(const char* str);
+    // 判断是否字符串相等
+    bool operator==(const String &str);
+    // 获取字符串长度
+    int length();
+    // 求子字符串[start,start+n-1]
+    String substr(int start, int n);
+    // 重载输出
+    friend ostream & operator<<(ostream &o,const String &str);
+private:
+    char* data;
+    int size;
+};
+// 构造函数
+String::String(const char *str){
+    if(str == NULL){
+        data = new char[1];
+        data[0] = '\0';
+        size = 0;
+    }//if
+    else{
+        size = strlen(str);
+        data = new char[size+1];
+        strcpy(data,str);
+    }//else
+}
+// 复制构造函数
+String::String(const String &str){
+    size = str.size;
+    data = new char[size+1];
+    strcpy(data,str.data);
+}
+// 析构函数
+String::~String(){
+    delete[] data;
+}
+// 字符串连接
+String String::operator+(const String &str){
+    String newStr;
+    //释放原有空间
+    delete[] newStr.data;
+    newStr.size = size + str.size;
+    newStr.data = new char[newStr.size+1];
+    strcpy(newStr.data,data);
+    strcpy(newStr.data+size,str.data);
+    return newStr;
+}
+// 字符串赋值
+String & String::operator=(const String &str){
+    if(data == str.data){
+        return *this;
+    }//if
+    delete [] data;
+    size = str.size;
+    data = new char[size+1];
+    strcpy(data,str.data);
+    return *this;
+}
+// 字符串赋值
+String& String::operator=(const char* str){
+    if(data == str){
+        return *this;
+    }//if
+    delete[] data;
+    size = strlen(str);
+    data = new char[size+1];
+    strcpy(data,str);
+    return *this;
+}
+// 判断是否字符串相等
+bool String::operator==(const String &str){
+    return strcmp(data,str.data) == 0;
+}
+// 获取字符串长度
+int String::length(){
+    return size;
+}
+// 求子字符串[start,start+n-1]
+String String::substr(int start, int n){
+    String newStr;
+    // 释放原有内存
+    delete [] newStr.data;
+    // 重新申请内存
+    newStr.data = new char[n+1];
+    for(int i = 0;i < n;++i){
+        newStr.data[i] = data[start+i];
+    }//for
+    newStr.data[n] = '\0';
+    newStr.size = n;
+    return newStr;
+}
+// 重载输出
+ostream & operator<<(ostream &o, const String &str){
+    o<<str.data;
+    return o;
+}
+ 
+int main(){
+    String str1("hello ");
+    String str2 = "world";
+    String str3 = str1 + str2;
+    cout<<"str1->"<<str1<<" size->"<<str1.length()<<endl;
+    cout<<"str2->"<<str2<<" size->"<<str2.length()<<endl;
+    cout<<"str3->"<<str3<<" size->"<<str3.length()<<endl;
+ 
+    String str4("helloworld");
+    if(str3 == str4){
+        cout<<str3<<" 和 "<<str4<<" 是一样的"<<endl;
+    }//if
+    else{
+        cout<<str3<<" 和 "<<str4<<" 是不一样的"<<endl;
+    }
+ 
+    cut<<str3.substr(6,5)<<" size->"<<str3.substr(6,5).length()<<endl;
+    return 0;
+}
+ 
+~~~
+
+
 #### 银行家算法
 1. 判断请求是否高于需求，如果高于请求则出错，否则下一步
 2. 判断是否需求高于目前有的，如果有多则分配。否则等待
@@ -357,7 +559,96 @@ std::mutex mt1, mt2;
 ### 无锁编程 下生产者消费者模式 生成与消费队列
 
 
+
+### LRU 设计 
+~~~C++
+class LRUCache{
+    size_t m_capacity;
+    unordered_map<int,  list<pair<int, int>>::iterator> m_map; //m_map_iter->first: key, m_map_iter->second: list iterator;
+    list<pair<int, int>> m_list;                               //m_list_iter->first: key, m_list_iter->second: value;
+public:
+    LRUCache(size_t capacity):m_capacity(capacity) {
+    }
+    int get(int key) {
+        auto found_iter = m_map.find(key);
+        if (found_iter == m_map.end()) //key doesn't exist
+            return -1;
+        m_list.splice(m_list.begin(), m_list, found_iter->second); //move the node corresponding to key to front
+        return found_iter->second->second;                         //return value of the node
+    }
+    void set(int key, int value) {
+        auto found_iter = m_map.find(key);
+        if (found_iter != m_map.end()) //key exists
+        {
+            m_list.splice(m_list.begin(), m_list, found_iter->second); //move the node corresponding to key to front
+            found_iter->second->second = value;                        //update value of the node
+            return;
+        }
+        if (m_map.size() == m_capacity) //reached capacity
+        {
+           int key_to_del = m_list.back().first; 
+           m_list.pop_back();            //remove node in list;
+           m_map.erase(key_to_del);      //remove key in map
+        }
+        m_list.emplace_front(key, value);  //create new node in list
+        m_map[key] = m_list.begin();       //create correspondence between key and node
+    }
+};
+~~~
+
+### LFU 设计 
 //进程通信 
 
 // C++ 异常处理 http://blog.jobbole.com/44409/
+http://blog.csdn.net/lifesider/article/details/6582338 无锁结构
+//排序算法 
 
+### 归并排序
+``` C++
+vector<int>::iterator merge(vector<int>::iterator b1,vector<int>::iterator e1,vector<int>::iterator b2,vector<int>::iterator e2,vector<int>::iterator re){
+    while(b1!=e1&&b2!=e2){
+        if(*b1>*b2){
+            *re = *b1;
+            ++b1;
+        } else {
+            *re = *b2;
+            ++b2;
+        }
+        ++re;
+    }
+    return copy(b1,e1,copy(b2,e2,re));
+}
+
+void inplace_merge(vector<int>::iterator b,vector<int>::iterator mid,vector<int>::iterator e) {
+    //创建一个数组
+    int len_1 = distance(b,mid);
+    int len_2 = distance(mid,e);
+    vector<int> temp_vectort(len_1);
+    copy(b,mid,temp_vectort.begin());
+    merge(temp_vectort.begin(),temp_vectort.end(),mid,e,b);
+
+}
+
+void merge_sort(vector<int>::iterator b,vector<int>::iterator e) {
+    if(e-b>1){
+        auto mid = b +(e-b)/2;
+        merge_sort(b,mid);
+        merge_sort(mid,e);
+        inplace_merge(b,mid,e);
+    }
+}
+```
+
+### 快速排序
+```C++
+template<typename T>
+void quicsort(T b,T e){
+    if(e-b>1){
+        auto mid = partition(b,e,*b);
+        quick_sort(b,mid,*b);
+        quick_sort(mid+1,b,*(mid+1));
+    }
+
+}
+
+```

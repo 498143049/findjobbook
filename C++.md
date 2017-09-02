@@ -1,206 +1,5 @@
-## string 实现原理
-~~~ C++
-class String
-{
-    public:
-        String(const char *str = NULL);// 普通构造函数
-        String(const String &other);    // 拷贝构造函数
-        ~String(void);    // 析构函数
-        String & operate =(const String &other);// 赋值函数
-    private:
-        char *m_data;// 用于保存字符串
-}; 
-//注意如果字符为空，则还是需要分配一个字符
-String::String(const char *str)
-{
-        if(str==NULL)
-        {
-                m_data = new char[1]; // 得分点：对空字符串自动申请存放结束标志'\0'的//加分点：对m_data加NULL 判断
-                *m_data = '\0';
-        }    
-        else
-        {
-         int length = strlen(str);
-         m_data = new char[length+1]; // 若能加 NULL 判断则更好
-         strcpy(m_data, str);
-        }
-} 
-String::~String(void)
-{
-    delete [] m_data; // 或delete m_data;
-}
-
-String::String(const String &other) 　　　// 得分点：输入参数为const型
-{     
-        int length = strlen(other.m_data);
-        m_data = new char[length+1]; 　　　　//加分点：对m_data加NULL 判断
-        strcpy(m_data, other.m_data);    
-} 
-String & String::operate =(const String &other) // 得分点：输入参数为const
-
-型
-{     
-    if(this == &other) //得分点：检查自赋值
-        return *this; 
-    delete [] m_data; //得分点：释放原有的内存资源
-    int length = strlen( other.m_data );      
-    m_data = new char[length+1];//对m_data加NULL 判断
-    strcpy( m_data, other.m_data );   
-    return *this;   //得分点：返回本对象的引用  
-
-}
-~~~
-#### 总体版本
-~~~ C++
-链接：https://www.nowcoder.com/questionTerminal/b6daadf699884fb4856d5499cac7691d
-来源：牛客网
-
-/*-------------------------------------
-*   日期：2015-03-31
-*   作者：SJF0115
-*   题目: 实现string类
-*   来源：百度
-*   博客：
-------------------------------------*/
-#include <iostream>
-#include <cstring>
-using namespace std;
- 
-class String{
-public:
-    // 默认构造函数
-    String(const char* str = NULL);
-    // 复制构造函数
-    String(const String &str);
-    // 析构函数
-    ~String();
-    // 字符串连接
-    String operator+(const String & str);
-    // 字符串赋值
-    String & operator=(const String &str);
-    // 字符串赋值
-    String & operator=(const char* str);
-    // 判断是否字符串相等
-    bool operator==(const String &str);
-    // 获取字符串长度
-    int length();
-    // 求子字符串[start,start+n-1]
-    String substr(int start, int n);
-    // 重载输出
-    friend ostream & operator<<(ostream &o,const String &str);
-private:
-    char* data;
-    int size;
-};
-// 构造函数
-String::String(const char *str){
-    if(str == NULL){
-        data = new char[1];
-        data[0] = '\0';
-        size = 0;
-    }//if
-    else{
-        size = strlen(str);
-        data = new char[size+1];
-        strcpy(data,str);
-    }//else
-}
-// 复制构造函数
-String::String(const String &str){
-    size = str.size;
-    data = new char[size+1];
-    strcpy(data,str.data);
-}
-// 析构函数
-String::~String(){
-    delete[] data;
-}
-// 字符串连接
-String String::operator+(const String &str){
-    String newStr;
-    //释放原有空间
-    delete[] newStr.data;
-    newStr.size = size + str.size;
-    newStr.data = new char[newStr.size+1];
-    strcpy(newStr.data,data);
-    strcpy(newStr.data+size,str.data);
-    return newStr;
-}
-// 字符串赋值
-String & String::operator=(const String &str){
-    if(data == str.data){
-        return *this;
-    }//if
-    delete [] data;
-    size = str.size;
-    data = new char[size+1];
-    strcpy(data,str.data);
-    return *this;
-}
-// 字符串赋值
-String& String::operator=(const char* str){
-    if(data == str){
-        return *this;
-    }//if
-    delete[] data;
-    size = strlen(str);
-    data = new char[size+1];
-    strcpy(data,str);
-    return *this;
-}
-// 判断是否字符串相等
-bool String::operator==(const String &str){
-    return strcmp(data,str.data) == 0;
-}
-// 获取字符串长度
-int String::length(){
-    return size;
-}
-// 求子字符串[start,start+n-1]
-String String::substr(int start, int n){
-    String newStr;
-    // 释放原有内存
-    delete [] newStr.data;
-    // 重新申请内存
-    newStr.data = new char[n+1];
-    for(int i = 0;i < n;++i){
-        newStr.data[i] = data[start+i];
-    }//for
-    newStr.data[n] = '\0';
-    newStr.size = n;
-    return newStr;
-}
-// 重载输出
-ostream & operator<<(ostream &o, const String &str){
-    o<<str.data;
-    return o;
-}
- 
-int main(){
-    String str1("hello ");
-    String str2 = "world";
-    String str3 = str1 + str2;
-    cout<<"str1->"<<str1<<" size->"<<str1.length()<<endl;
-    cout<<"str2->"<<str2<<" size->"<<str2.length()<<endl;
-    cout<<"str3->"<<str3<<" size->"<<str3.length()<<endl;
- 
-    String str4("helloworld");
-    if(str3 == str4){
-        cout<<str3<<" 和 "<<str4<<" 是一样的"<<endl;
-    }//if
-    else{
-        cout<<str3<<" 和 "<<str4<<" 是不一样的"<<endl;
-    }
- 
-    cut<<str3.substr(6,5)<<" size->"<<str3.substr(6,5).length()<<endl;
-    return 0;
-}
- 
-~~~
-
 ### i++/++i是不是原子操作
 i++ 不是，i++分为3个步骤
-
 + 内存到寄存器
 + 寄存器自增
 + 写回内存
@@ -286,6 +85,7 @@ list就是数据结构中的双向链表，因此它的内存空间可以是不�
 2）每个仿函数都有其类型，因此你可以将仿函数的类型当作template参数来传递，从而指定某种行为模式。此外还有一个好处：容器类型也会因为仿函数的不同而不同
 
 还有就是效率问题，函数指针的调用，我们的电脑需要做很多工作，比如说保存当前的寄存器值，传递参数，返回值，返回到函数调用地方继续执行等。
+仿函数配接器
 
 ### shared_ptr什么时候引用计数加1？
 1. 在构造对象指正的时候默认为1
@@ -380,67 +180,147 @@ HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连�
     
 	
 ### 动态绑定怎么实现？（就是问了一下基类与派生类指针和引用的转换问题）  
-	
+
+
+
 ### 类型转换有哪些？（四种类型转换，分别举例说明）  
++ const_cast 去const属性
++ reinterpret_cast 转一个指针类型为其他类型
++ static_cast 
+    + 基本类型转换
+    + 由子类转换为父类安全，由父转为儿子。不安全。
+    + 空指针到其他指针
+    + 如果A B 类无关报错
++ dynamitc_cast 作用于引用和指针，父亲转化为儿子会检查是否有效
+~~~ C++
+class Base { virtual dummy() {} };
+class Derived : public Base {};
+ 
+Base* b1 = new Derived;
+Base* b2 = new Base;
+ 
+Derived* d1 = dynamic_cast<Derived *>(b1); // succeeds
+Derived* d2 = dynamic_cast<Derived *>(b2); // fails: returns 'NULL'
+~~~
+
+
 
 ### 操作符重载（+操作符），具体如何去定义，？（让把操作符重载函数原型说一遍）  
+返回值 operator==(输入参数 1 输入参数2){
+
+}
 	
 ### 内存对齐的原则？（原则叙述了一下并举例说明）  
-	
++ 数据成员对齐规则：结构(struct)(或联合(union))的数据成员，第一个数据成员放在offset为0的地方，以后每个数据成员存储的起始位置要从该成员大小或者成员的子成员大小（只要该成员有子成员，比如说是数组，结构体等）的整数倍开始(比如int在３２位机为４字节, 则要从４的整数倍地址开始存储),基本类型不包括struct/class/uinon。
+
++ 结构体作为成员:如果一个结构里有某些结构体成员,则结构体成员要从其内部"最宽基本类型成员"的整数倍地址开始存储.(struct a里存有struct b,b里有char,int ,double等元素,那b应该从8的整数倍开始存储.)。
+
++ 收尾工作:结构体的总大小,也就是sizeof的结果,.必须是其内部最大成员的"最宽基本类型成员"的整数倍.不足的要补齐.(基本类型不包括struct/class/uinon)。
+
+4).sizeof(union)，以结构里面size最大元素为union的size,因为在某一时刻，union只有一个成员真正存储于该地址。
+
+\#pragma pack指定的数值和结构(或联合)最大数据成员长度中，比较小的那个进行。
+
 ### 模版怎么实现？ 
-	
+模式匹配 与惰性计算
 ### 指针和const的用法？（就是四种情况说了一下）  
-	
+int *p；
+const int *p;
+int * const p;
+int const *p;
+int const * const p;
 ### 虚函数、纯虚函数、虚函数与析构函数？（纯虚函数如何定义，为什么析构函数要定义成虚函数）  
+
+纯虚函数在基类中是没有定义的，必须在子类中加以实现，
+virtual <类型><函数名>(<参数表>)=0; 
+
+我们知道，为了能够正确的调用对象的析构函数，一般要求具有层次结构的顶级类定义其析构函数为虚函数。因为在delete一个抽象类指针时候，必须要通过虚函数找到真正的析构函数。
 	
 ### 内联函数（讲了一下内联函数的优点以及和宏定义的区别）  
-	
+内联函数从源代码层看，有函数的结构，而在编译后，却不具备函数的性质。编译时，类似宏替换，使用函数体替换调用处的函数名。一般在代码中用inline修饰，但是能否形成内联函数，需要看编译器对该函数定义的具体处理。
+
+宏是由预处理器对宏进行替代，而内联函数是通过编译器控制来实现的
+
+ 内联函数是真正的函数，只是在需要用到的时候，内联函数像宏一样的展开，所以取消了函数的参数压栈，减少了调用的开销。你可以象调用函数一样来调用内联函数，而不必担心会产生于处理宏的一些问题。内联函数与带参数的宏定义进行下比较，它们的代码效率是一样，但是内联欢函数要优于宏定义，因为内联函数遵循的类型和作用域规则，它与一般函数更相近
+
+宏的缺点：
+宏不能访问对象的私有成员。
+宏的定义很容易产生二意性。
+
+### using 定义别名
+ c++11中的using关键字可以实现typedef的功能，而using的定义顺序有利于查找 
+
 ### const和typedef（主要讲了const的用处，有那些优点）  
 		
 ### 链接指示：extern “C”（作用）  
 	
+//[兼容C](https://github.com/hokein/Wiki/wiki/extern-%22C%22)
+在C++中常在头文件见到extern "C"修饰函数，那有什么作用呢？ 是用于C++链接在C语言模块中定义的函数。
+
+C++虽然兼容C，但C++文件中函数编译后生成的符号与C语言生成的不同。因为C++支持函数重载，C++函数编译后生成的符时带有函数参数类型的信息，而C则没有。
+
+例如int add(int a, int b)函数经过C++编译器生成.o文件后，add会变成形如add_int_int之类的, 而C的话则会是形如_add, 就是说：相同的函数，在C和C++中，编译后生成的符号不同。
+
+这就导致一个问题：如果C++中使用C语言实现的函数，在编译链接的时候，会出错，提示找不到对应的符号。此时extern "C"就起作用了：告诉链接器去寻找_add这类的C语言符号，而不是经过C++修饰的符号。
+
 ### c语言和c++有什么区别？（大体讲了 一下，继承、多态、封装、异常处理等）  
-	
+
+
 ### const关键字的作用？（const成员函数，函数传递，和define的区别） 
-			
+
+### static 关键字的作用 
+
 ### 静态成员函数和数据成员有什么意义？ 
 
-继承机制中对象之间是如何转换的？ 
+### 继承机制中对象之间是如何转换的？ 
 		
-继承机制中引用和指针之间如何转换？ 
+### 继承机制中引用和指针之间如何转换？ 
 		
+### 虚函数，虚函数表里面内存如何分配？（这个考前看过了，答的还不错）  
 		
-虚函数，虚函数表里面内存如何分配？（这个考前看过了，答的还不错）  
-		
-		
-strcpy函数的编写？（这个函数很熟悉，后来阿里校招面试也让现场编写了）  
-		
-数据结构中二叉树的非递归遍历？（现场画图举例讲解的，所以大家面试的时候尽量多动笔）  
-		
-如何实现只能动态分配类对象，不能定义类对象？（这个牛客上的题目，我把如何只能动态分配和只能静态分配都讲了一下）  
+### 如何实现只能动态分配类对象，不能定义类对象？（这个牛客上的题目，我把如何只能动态分配和只能静态分配都讲了一下）  
 			
-stl有哪些容器，对比vector和set？ 
+### stl有哪些容器，对比vector和set 
 			
-红黑树的定义和解释？ 
+### 红黑树的定义和解释
 		
-模版特化的概念，为什么特化？ 
+### 模版特化的概念，为什么特化？ 
 		
-explicit是干什么用的？ 
+### explicit是干什么用的？ 
 			
-strcpy返回类型是干嘛用的？ 
+### strcpy返回类型是干嘛用的？ 
 		
-内存溢出有那些因素？ 
+### 内存溢出有那些因素？ 
 		
-new与malloc的区别，delet和free的区别？ 
+### new与malloc的区别，delet和free的区别？ 
+			
+### 异常机制是怎么回事？ 
 		
-为什么要用static_cast转换而不用c语言中的转换？ 
+### 迭代器删除元素的会发生什么？ 
 		
-异常机制是怎么回事？ 
+### 必须在构造函数初始化式里进行初始化的数据成员有哪些？ 
 		
-迭代器删除元素的会发生什么？ 
+### 类的封装：private，protected，public 
 		
-必须在构造函数初始化式里进行初始化的数据成员有哪些？ 
-		
-类的封装：private，protected，public 
-		
- auto_ptr类： 
+### auto_ptr类： 
+
+
+
+### 类的方法
+成员方法又称为实例方法
+静态方法又称为类方法
+
+class Base 
+{
+  public:
+  virtual   ~Base(){std::out<<”Base Destructor”<<std::endl;}
+}
+class Derived: public Base 
+{
+  public :
+   ~Derived(){std::out<<”Derived    Destructor” <<std::endl;}
+}
+
+
+### 如何定义一个只能在堆上（栈上）生成对象的类?
+https://www.nowcoder.com/questionTerminal/0a584aa13f804f3ea72b442a065a7618  

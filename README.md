@@ -13,6 +13,8 @@
 ##~~ LInux 常见指令 修改权限之类的 增加用户 读写文件~~
 
 
+## 无锁map 线程安全 怎么实现的 
+
 2.mysql的索引，实现原理，事务性，主键索引和普通索引的区别  //http://blog.codinglabs.org/articles/theory-of-mysql-index.html  
 3.对称和非对称加密算法的区别   
 4.https和http的区别    //https://juejin.im/entry/58d7635e5c497d0057fae036
@@ -122,6 +124,11 @@ unorder_map
 
 在一个浏览器里面输入一个网址，后回车，在这后面发生了什么。(开放性问题，随便说，但是我答得不好，没能把握住) (最后这个问题，要是有大佬能够完整的回答一下，那肯定是极好的。)
 	
+strcpy函数的编写？（这个函数很熟悉，后来阿里校招面试也让现场编写了）  
+		
+数据结构中二叉树的非递归遍历？（现场画图举例讲解的，所以大家面试的时候尽量多动笔）  
+
+
 fg：将后台中的命令调至前台继续运行
 bg：将一个在后台暂停的命令，变成继续执行
 ctrl + z：可以将一个正在前台执行的命令放到后台，并且暂停
@@ -210,4 +217,7 @@ https://www.nowcoder.com/test/question/done?tid=9925864&qid=4687#summary
 
 ### 反码 补码
 
-### https://www.nowcoder.com/test/question/done?tid=9954385&qid=15949#summary 指正跳跃
+
+###  https://www.nowcoder.com/test/question/done?tid=9954385&qid=15949#summary 指正跳跃
+
+https://www.nowcoder.com/discuss/26149?type=2&order=3&pos=122&page=2
